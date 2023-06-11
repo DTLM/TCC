@@ -109,35 +109,15 @@ def criarDiretoriosBase(caminho, destino):
             print("dir já existe")
 
 def criarDiretorios():
-    #noise:
-    #para treino
-    criarDiretoriosBase(folderGrupos, absPath +"\\"+ baseFolder + "\\" + folderNoiseFilter + "\\" + folderTreinoGrupo)
-    #para teste
-    criarDiretoriosBase(folderTestGrupos, absPath +"\\"+ baseFolder + "\\" + folderNoiseFilter + "\\" + folderTesteGrupo)
-    # para treino não grupo
-    criarDiretoriosBase(folderTrain, absPath +"\\"+ baseFolder + "\\" + folderNoiseFilter + "\\" + folderTesteDoenca)
-    #doenças não grupo
-    criarDiretoriosBase(folderTestDiseases, absPath +"\\"+ baseFolder + "\\" + folderNoiseFilter + "\\" + folderTreinoDoenca)
-
     #peper
     #para treino
-    criarDiretoriosBase(folderGrupos, absPath +"\\"+ baseFolder + "\\" + folderPeperFilter + "\\" + folderTreinoGrupo)
+    #criarDiretoriosBase(folderGrupos, absPath +"\\"+ baseFolder + "\\" + folderPeperFilter + "\\" + folderTreinoGrupo)
     #para teste
-    criarDiretoriosBase(folderTestGrupos, absPath +"\\"+ baseFolder + "\\" + folderPeperFilter + "\\" + folderTesteGrupo)
+    #criarDiretoriosBase(folderTestGrupos, absPath +"\\"+ baseFolder + "\\" + folderPeperFilter + "\\" + folderTesteGrupo)
     # para treino não grupo
     criarDiretoriosBase(folderTrain, absPath +"\\"+ baseFolder + "\\" + folderPeperFilter + "\\" + folderTesteDoenca)
     #doenças não grupo
     criarDiretoriosBase(folderTestDiseases, absPath +"\\"+ baseFolder + "\\" + folderPeperFilter + "\\" + folderTreinoDoenca)
-
-    #filtro duplo
-    #para treino
-    criarDiretoriosBase(folderGrupos, absPath +"\\"+ baseFolder + "\\" + folderFiltroDuplo + "\\" + folderTreinoGrupo)
-    #para teste
-    criarDiretoriosBase(folderTestGrupos, absPath +"\\"+ baseFolder + "\\" + folderFiltroDuplo + "\\" + folderTesteGrupo)
-    # para treino não grupo
-    criarDiretoriosBase(folderTrain, absPath +"\\"+ baseFolder + "\\" + folderFiltroDuplo + "\\" + folderTesteDoenca)
-    #doenças não grupo
-    criarDiretoriosBase(folderTestDiseases, absPath +"\\"+ baseFolder + "\\" + folderFiltroDuplo + "\\" + folderTreinoDoenca)
 
 # CHAMADA DE FILTROS --------------------------------------------------------------------------------------------------
 
@@ -242,21 +222,13 @@ def copiarPorPathDoublerFilter(caminho, destino):
 
 
 def prepareAmbiente():
-    #criarDiretorios()
+    criarDiretorios()
 
     # dentro do diretorio tem arquivos dos 4 grupos e dentro desses grupos tem as imagens
-    # copiarPorPathNoiseFilter(folderGrupos, absPath + "\\" + baseFolder + "\\" +"noise filter" + "\\" + folderTreinoGrupo)
-    # copiarPorPathNoiseFilter(folderTrain, absPath + "\\" + baseFolder + "\\" +"noise filter" + "\\" + folderTreinoDoenca)
-    # copiarPorPathNoiseFilter(folderTestGrupos, absPath + "\\" + baseFolder + "\\" +"noise filter" + "\\" + folderTesteGrupo)
-    # copiarPorPathNoiseFilter(folderTestDiseases, absPath + "\\" + baseFolder + "\\" +"noise filter" + "\\" + folderTesteDoenca)
-    # copiarPorPathPeperFilter(folderGrupos, absPath + "\\" + baseFolder + "\\" +"peper filter" + "\\" + folderTreinoGrupo)
-    # copiarPorPathPeperFilter(folderTrain, absPath + "\\" + baseFolder + "\\" +"peper filter" + "\\" + folderTreinoDoenca)
-    # copiarPorPathPeperFilter(folderTestGrupos, absPath + "\\" + baseFolder + "\\" +"peper filter" + "\\" + folderTesteGrupo)
-    # copiarPorPathPeperFilter(folderTestDiseases, absPath + "\\" + baseFolder + "\\" +"peper filter" + "\\" + folderTesteDoenca)
-    copiarPorPathDoublerFilter(folderGrupos, absPath + "\\" + baseFolder + "\\" +"filtro duplo" + "\\" + folderTreinoGrupo)
-    #copiarPorPathDoublerFilter(folderTrain, absPath + "\\" + baseFolder + "\\" +"filtro duplo" + "\\" + folderTreinoDoenca)
-    #copiarPorPathDoublerFilter(folderTestGrupos, absPath + "\\" + baseFolder + "\\" +"filtro duplo" + "\\" + folderTesteGrupo)
-    #copiarPorPathDoublerFilter(folderTestDiseases, absPath + "\\" + baseFolder + "\\" +"filtro duplo" + "\\" + folderTesteDoenca)
+    copiarPorPathPeperFilter(folderGrupos, absPath + "\\" + baseFolder + "\\" +"peper filter" + "\\" + folderTreinoGrupo)
+    copiarPorPathPeperFilter(folderTrain, absPath + "\\" + baseFolder + "\\" +"peper filter" + "\\" + folderTreinoDoenca)
+    copiarPorPathPeperFilter(folderTestGrupos, absPath + "\\" + baseFolder + "\\" +"peper filter" + "\\" + folderTesteGrupo)
+    copiarPorPathPeperFilter(folderTestDiseases, absPath + "\\" + baseFolder + "\\" +"peper filter" + "\\" + folderTesteDoenca)
+    
 
-prepareAmbiente()
-#cv2.imwrite('./Dados/peper filter/treino grupo/teste.png',add_noise("alopecia-areata-26.jpg"))
+#prepareAmbiente()

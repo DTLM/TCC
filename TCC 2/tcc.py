@@ -13,21 +13,12 @@ comandos de instalação de pacotes:
 """
 
 from matplotlib import pyplot
-from matplotlib.image import imread
-from shutil import copyfile
 import os
-import random
-from random import random
-from random import seed
-from numpy import asarray
-from numpy import save
 import tensorflow as tf
 from tensorflow.keras.preprocessing.image import load_img
 from tensorflow.keras.preprocessing.image import img_to_array
-from numpy import load
 import sys
 from matplotlib import pyplot
-from  tensorflow.keras.utils import to_categorical
 from  tensorflow.keras.models import Sequential
 from  tensorflow.keras.layers import Conv2D
 from  tensorflow.keras.layers import MaxPooling2D
@@ -36,18 +27,15 @@ from  tensorflow.keras.layers import Flatten
 from  tensorflow.keras.optimizers import SGD
 from  tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.layers import Dropout
-import cv2
-from sklearn.metrics import precision_score
-from sklearn.metrics import recall_score
-from sklearn.metrics import f1_score
-from sklearn.metrics import confusion_matrix
 from  tensorflow.keras.metrics import Precision
 from  tensorflow.keras.metrics import Recall
+import cv2
 from factoryFilter import prepareAmbiente
 
 # caminhos
 absPath = os.getcwd()
 baseFolder = "\\Dados\\"
+caminhoTesteFinal = absPath + "\\fotos para testes de predict"
 
 # noise
 caminhoNoiseTreinoGrupo = absPath + baseFolder + "noise filter\\" + "treino grupo"
@@ -68,8 +56,23 @@ caminhoDuploTreinoDoencas = absPath + baseFolder + "filtro duplo\\" + "treino do
 caminhoDuploTesteDoencas = absPath + baseFolder + "filtro duplo\\" + "teste doencas"
 
 # sem filtro
-teste = './Dados/test/'
-treino = './Dados/train/'
+teste = './Dados/test diseases/'
+treino = './Dados/train diseases/'
+testeGrupo = './Dados/test grupos/'
+treinoGrupo = './Dados/train grupos/'
+
+# load and prepare the image
+def load_image(filename):
+ # load the image
+ img = load_img(filename, target_size=(224, 224))
+ # convert to array
+ img = img_to_array(img)
+ # reshape into a single sample with 3 channels
+ img = img.reshape(1, 224, 224, 3)
+ # center pixel data
+ img = img.astype('float32')
+ img = img - [123.68, 116.779, 103.939]
+ return img
 
 # plot diagnostic learning curves
 def summarize_diagnostics(history):
@@ -85,7 +88,7 @@ def summarize_diagnostics(history):
 	pyplot.plot(history.history['val_accuracy'], color='orange', label='test')
 	# save plot to file
 	filename = sys.argv[0].split('/')[-1]
-	pyplot.savefig(filename + '_plot.png')
+	pyplot.savefig(filename + " peper filtro doença" + '_plot.png')
 	pyplot.close()
 
 """Tecnicas a verificar pra pre tratamento de imagens: 
@@ -114,24 +117,24 @@ def define_model():
  
  model.add(Conv2D(256, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
  model.add(MaxPooling2D((2, 2)))
- model.add(Dropout(0.5))
+ model.add(Dropout(0.2))
 
  model.add(Conv2D(512, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
  model.add(MaxPooling2D((2, 2)))
- model.add(Dropout(0.5))
+ model.add(Dropout(0.2))
 
  model.add(Conv2D(1024, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
  model.add(MaxPooling2D((2, 2)))
- model.add(Dropout(0.5))
+ model.add(Dropout(0.2))
 
  model.add(Conv2D(2048, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
  model.add(MaxPooling2D((2, 2)))
- model.add(Dropout(0.5))
+ model.add(Dropout(0.2))
 	
  model.add(Flatten())
- model.add(Dense(128, activation='relu', kernel_initializer='he_uniform'))
- model.add(Dense(128, activation='relu', kernel_initializer='he_uniform'))
- model.add(Dense(4, activation="softmax")) # camada de saida
+ model.add(Dense(2048, activation='relu', kernel_initializer='he_uniform'))
+ model.add(Dropout(0.5))
+ model.add(Dense(18, activation="softmax")) # camada de saida
  
 
  # compile model
@@ -149,15 +152,15 @@ def run_test():
 
  # create data generator for train, normalizate the data (1.0/255.0), Image data augmentation (width_shift_range=0.1, height_shift_range=0.1, horizontal_flip=True)
  #from https://machinelearningmastery.com/how-to-develop-a-convolutional-neural-network-to-classify-photos-of-dogs-and-cats/
- train_datagen = ImageDataGenerator(rescale = 1./255.0, width_shift_range=0.1, height_shift_range=0.1, horizontal_flip = True)
+ train_datagen = ImageDataGenerator(rescale = 1.0/255.0, width_shift_range=0.1, height_shift_range=0.1, horizontal_flip = True)
  # create data generator for tests and normalizate the data (1.0/255.0)
  datagen = ImageDataGenerator(rescale=1.0/255.0)
 
  # Train and Test part
  # prepare iterators
- train_it = train_datagen.flow_from_directory('./Dados/train/',
+ train_it = train_datagen.flow_from_directory(caminhoPeperTreinoDoencas,
 	class_mode='categorical', batch_size=64, target_size=(200, 200))
- test_it = datagen.flow_from_directory('./Dados/test/',
+ test_it = datagen.flow_from_directory(caminhoPeperTesteDoencas,
 	class_mode='categorical', batch_size=64, target_size=(200, 200))
 
  # fit model
@@ -173,10 +176,15 @@ def run_test():
  # learning curves
  summarize_diagnostics(history)
 
+ for image in os.listdir(caminhoTesteFinal):
+  caminhoImageTeste = caminhoTesteFinal + "\\" + image
+  if(os.path.exists(caminhoImageTeste)):
+   img = load_image(caminhoImageTeste)
+#    pyplot.imshow(img)
+#    pyplot.show()
+   result = model.predict(img)
+   print(result[0])
+  else:
+   print("caminho não existe.")
+
 run_test()
-
-#from: https://machinelearningmastery.com/how-to-calculate-precision-recall-f1-and-more-for-deep-learning-models/
-# accuracy: (tp + tn) / (p + n)
-
-# precision tp / (tp + fp)
-# recall: tp / (tp + fn)

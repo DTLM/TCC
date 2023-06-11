@@ -1,0 +1,4 @@
+acne-cystic-137: inflamatorias
+acne-keloidalis-15: anexos cutaneos
+actinic-keratosis-arm-3: neoplasicas
+tinea-primary-lesion-15: infeciosas
